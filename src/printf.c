@@ -34,7 +34,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
-#include <syslog.h>
+//#include <syslog.h>
 #include <limits.h>
 
 // Mac OS X has no pty.h, so use util.h instead
@@ -42,10 +42,10 @@
 #ifdef HAVE_PTY_H
 	#include <pty.h>
 #else
-	#include <util.h>
+	//#include <util.h>
 #endif
 
-#include <sys/ioctl.h>
+//#include <sys/ioctl.h>
 
 #include "lg-util.h"
 
@@ -170,6 +170,7 @@ void progress_bar(unsigned ctrl, unsigned long x, unsigned long n, unsigned w) {
 	}
 }
 
+#define LINE_MAX 8192
 static void do_log(const char *pre, const char *fmt, va_list args) {
 	int rc;
 	static char format[LINE_MAX];
@@ -177,21 +178,24 @@ static void do_log(const char *pre, const char *fmt, va_list args) {
 	rc = snprintf(format, LINE_MAX, "%s%s\n", use_syslog ? "" : pre, fmt);
 	if (rc < 0) fail_printf("EIO");
 
-	if (use_syslog == 1)
-		vsyslog(LOG_CRIT, format, args);
-	else
+	//if (use_syslog == 1)
+	//	vsyslog(LOG_CRIT, format, args);
+	//else
 		vfprintf(stderr, format, args);
 }
 
 static void get_screen_size(int fd, unsigned *w, unsigned *h) {
-	struct winsize ws;
+	//struct winsize ws;
 
-	if (ioctl(fd, TIOCGWINSZ, &ws) < 0 || !ws.ws_row || !ws.ws_col)
-		return;
+    if (w) *w = 80;
+    if (h) *h = 100;
 
-	if (w != NULL)
-		*w = ws.ws_col;
+	//if (ioctl(fd, TIOCGWINSZ, &ws) < 0 || !ws.ws_row || !ws.ws_col)
+	//	return;
 
-	if (h != NULL)
-		*h = ws.ws_row;
+	//if (w != NULL)
+	//	*w = ws.ws_col;
+
+	//if (h != NULL)
+	//	*h = ws.ws_row;
 }
